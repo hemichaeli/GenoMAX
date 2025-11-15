@@ -1,0 +1,173 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  gender        String    // "male" or "female"
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  assessments   Assessment[]
+  bloodTests    BloodTest[]
+  protocols     Protocol[]
+  subscriptions Subscription[]
+  chatMessages  ChatMessage[]
+  
+  @@map("users")
+}
+
+model Assessment {
+  id              String   @id @default(cuid())
+  userId          String
+  completedAt     DateTime @default(now())
+  
+  // Demographics
+  age             Int
+  weight          Float?
+  height          Float?
+  
+  // Health Goals
+  primaryGoal     String
+  secondaryGoals  String[] // Array of goals
+  
+  // Lifestyle
+  sleepHours      Float?
+  stressLevel     Int? // 1-10
+  exerciseFreq    String?
+  dietType        String?
+  
+  // Symptoms
+  symptoms        String[] // Array of symptoms
+  
+  // Medical History
+  conditions      String[] // Array of conditions
+  medications     String[] // Array of medications
+  
+  // Women-specific
+  menstrualCycle  String?
+  pregnancyStatus String?
+  
+  // Results
+  recommendations Json?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("assessments")
+}
+
+model BloodTest {
+  id           String   @id @default(cuid())
+  userId       String
+  tier         String   // "essential", "complete", "premium"
+  orderedAt    DateTime @default(now())
+  completedAt  DateTime?
+  results      Json?
+  
+  // Biomarkers
+  vitaminD     Float?
+  vitaminB12   Float?
+  iron         Float?
+  ferritin     Float?
+  folate       Float?
+  magnesium    Float?
+  
+  // Thyroid
+  tsh          Float?
+  t3           Float?
+  t4           Float?
+  
+  // Hormones (gender-specific)
+  testosterone Float?
+  estrogen     Float?
+  progesterone Float?
+  cortisol     Float?
+  
+  // Metabolic
+  glucose      Float?
+  hba1c        Float?
+  cholesterol  Float?
+  triglycerides Float?
+  
+  // Inflammation
+  crp          Float?
+  homocysteine Float?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("blood_tests")
+}
+
+model Protocol {
+  id          String   @id @default(cuid())
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  active      Boolean  @default(true)
+  
+  // Protocol Details
+  supplements Json // Array of supplement recommendations
+  dosages     Json // Dosage instructions
+  timing      Json // When to take supplements
+  
+  // Reasoning
+  reasoning   String?
+  goals       String[]
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("protocols")
+}
+
+model Subscription {
+  id              String   @id @default(cuid())
+  userId          String
+  status          String   // "active", "paused", "cancelled"
+  plan            String   // "essential", "complete", "premium"
+  price           Float
+  billingCycle    String   // "monthly", "quarterly", "annual"
+  
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("subscriptions")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String   // "user" or "assistant"
+  content   String
+  createdAt DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("chat_messages")
+  @@index([userId, createdAt])
+}
+
+model BetaSignup {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  gender    String?
+  source    String? // Where they signed up from
+  createdAt DateTime @default(now())
+  
+  @@map("beta_signups")
+}

@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-white text-brand-black;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-8 py-4 bg-gradient-to-r from-maxima-600 to-maxima-700 text-white rounded-full font-semibold hover:from-maxima-700 hover:to-maxima-800 transition-all duration-300 shadow-lg hover:shadow-xl;
+  }
+  
+  .btn-primary-maximo {
+    @apply px-8 py-4 bg-gradient-to-r from-maximo-600 to-maximo-700 text-white rounded-full font-semibold hover:from-maximo-700 hover:to-maximo-800 transition-all duration-300 shadow-lg hover:shadow-xl;
+  }
+  
+  .btn-secondary {
+    @apply px-8 py-4 border-2 border-brand-gray-300 text-brand-black rounded-full font-semibold hover:border-brand-gray-400 hover:bg-brand-gray-50 transition-all duration-300;
+  }
+  
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .gradient-text-maxima {
+    @apply bg-gradient-to-r from-maxima-600 to-maxima-700 bg-clip-text text-transparent;
+  }
+  
+  .gradient-text-maximo {
+    @apply bg-gradient-to-r from-maximo-600 to-maximo-700 bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
